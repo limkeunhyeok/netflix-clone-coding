@@ -11,12 +11,12 @@ export class TypeormConfigService implements TypeOrmOptionsFactory {
     connectionName?: string,
   ): Promise<TypeOrmModuleOptions> | TypeOrmModuleOptions {
     return {
-      type: this.configService.get<string>(EnvKeys.dbType) as 'postgres',
-      host: this.configService.get<string>(EnvKeys.dbHost),
-      port: this.configService.get<number>(EnvKeys.dbPort),
-      username: this.configService.get<string>(EnvKeys.dbUsername),
-      password: this.configService.get<string>(EnvKeys.dbPassword),
-      database: this.configService.get<string>(EnvKeys.dbDatabase),
+      type: this.configService.get<string>(EnvKeys.DB_TYPE) as 'postgres',
+      host: this.configService.get<string>(EnvKeys.DB_HOST),
+      port: this.configService.get<number>(EnvKeys.DB_PORT),
+      username: this.configService.get<string>(EnvKeys.DB_USERNAME),
+      password: this.configService.get<string>(EnvKeys.DB_PASSWORD),
+      database: this.configService.get<string>(EnvKeys.DB_DATABASE),
       entities: [],
       synchronize: true,
     };

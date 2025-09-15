@@ -1,7 +1,13 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
+import { LoggingMiddleware } from './common/middlewares/logging.middleware';
 import { envValidationSchema } from './configs/env.validation';
 import { TypeormConfigService } from './configs/typeorm.config';
 import { WinstonConfigService } from './configs/winston.config';
@@ -23,4 +29,10 @@ import { WinstonConfigService } from './configs/winston.config';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggingMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

@@ -1,19 +1,19 @@
 import * as Joi from 'joi';
 
 export const EnvKeys = {
-  env: 'ENV',
-  dbType: 'DB_TYPE',
-  dbHost: 'DB_HOST',
-  dbPort: 'DB_PORT',
-  dbUsername: 'DB_USERNAME',
-  dbPassword: 'DB_PASSWORD',
-  dbDatabase: 'DB_DATABASE',
-  hashRounds: 'HASH_ROUNDS',
-  accessTokenSecret: 'ACCESS_TOKEN_SECRET',
-  refreshTokenSecret: 'REFRESH_TOKEN_SECRET',
-};
+  ENV: 'ENV',
+  DB_TYPE: 'DB_TYPE',
+  DB_HOST: 'DB_HOST',
+  DB_PORT: 'DB_PORT',
+  DB_USERNAME: 'DB_USERNAME',
+  DB_PASSWORD: 'DB_PASSWORD',
+  DB_DATABASE: 'DB_DATABASE',
+  HASH_ROUNDS: 'HASH_ROUNDS',
+  ACCESS_TOKEN_SECRET: 'ACCESS_TOKEN_SECRET',
+  REFRESH_TOKEN_SECRET: 'REFRESH_TOKEN_SECRET',
+} as const;
 
-export const envValidationSchema = {
+export const envValidationSchema = Joi.object({
   ENV: Joi.string().valid('dev', 'prod').required(),
   DB_TYPE: Joi.string().valid('postgres').required(),
   DB_HOST: Joi.string().required(),
@@ -24,4 +24,4 @@ export const envValidationSchema = {
   HASH_ROUNDS: Joi.number().required(),
   ACCESS_TOKEN_SECRET: Joi.string().required(),
   REFRESH_TOKEN_SECRET: Joi.string().required(),
-};
+});

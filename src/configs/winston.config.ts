@@ -24,7 +24,7 @@ export class WinstonConfigService implements WinstonModuleOptionsFactory {
   createWinstonModuleOptions():
     | Promise<WinstonModuleOptions>
     | WinstonModuleOptions {
-    const env = this.configService.get<'dev' | 'prod'>(EnvKeys.env);
+    const env = this.configService.get<'dev' | 'prod'>(EnvKeys.ENV);
 
     const level = env === 'prod' ? LogLevel.INFO : LogLevel.SILLY;
 
@@ -33,7 +33,6 @@ export class WinstonConfigService implements WinstonModuleOptionsFactory {
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
-            winston.format.colorize({ all: true }),
             winston.format.timestamp(),
             winston.format.ms(),
             winston.format.json({ space: 2 }),
