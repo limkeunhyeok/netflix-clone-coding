@@ -22,6 +22,8 @@ export class LoggingMiddleware implements NestMiddleware {
     });
 
     res.on('finish', () => {
+      if (res.locals.hasError) return; // Error 로그는 filter에서 처리
+
       const { statusCode } = res;
 
       this.logger.info({
