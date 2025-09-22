@@ -2,6 +2,7 @@ import * as Joi from 'joi';
 
 export const EnvKeys = {
   ENV: 'ENV',
+  PORT: 'PORT',
   DB_TYPE: 'DB_TYPE',
   DB_HOST: 'DB_HOST',
   DB_PORT: 'DB_PORT',
@@ -15,6 +16,7 @@ export const EnvKeys = {
 
 export const envValidationSchema = Joi.object({
   ENV: Joi.string().valid('dev', 'prod').required(),
+  PORT: Joi.number().required(),
   DB_TYPE: Joi.string().valid('postgres').required(),
   DB_HOST: Joi.string().required(),
   DB_PORT: Joi.number().required(),

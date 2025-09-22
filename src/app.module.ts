@@ -11,6 +11,7 @@ import { LoggingMiddleware } from './common/middlewares/logging.middleware';
 import { envValidationSchema } from './configs/env.validation';
 import { TypeormConfigService } from './configs/typeorm.config';
 import { WinstonConfigService } from './configs/winston.config';
+import { UserModule } from './modules/users/user.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WinstonConfigService } from './configs/winston.config';
     WinstonModule.forRootAsync({
       useClass: WinstonConfigService,
     }),
+    UserModule,
   ],
   controllers: [],
   providers: [],
