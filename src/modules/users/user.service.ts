@@ -27,6 +27,7 @@ export class UserService {
     email: string;
     password: string;
     role: Role;
+    name: string;
   }): Promise<User> {
     const hasUser = await this.userRepository.findOne({
       where: {
@@ -43,12 +44,13 @@ export class UserService {
       this.configService.getOrThrow<number>(EnvKeys.HASH_ROUNDS),
     );
 
-    const createdUser = await this.userRepository.create({
+    const createdUser = this.userRepository.create({
       email: params.email,
       password: hash,
       role: params.role,
+      name: params.name,
     });
-    return createdUser;
+    return await this.userRepository.save(createdUser);
   }
 
   async findAll(): Promise<User[]> {

@@ -17,6 +17,9 @@ export class User extends BaseEntity {
   })
   password: string;
 
-  @Column({ enum: Role, default: Role.MEMBER })
+  @Column({ type: 'varchar', default: Role.MEMBER })
   role: Role;
+
+  @Column()
+  name: string;
 }

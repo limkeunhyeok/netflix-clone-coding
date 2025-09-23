@@ -11,4 +11,7 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(Role)
   role: Role = Role.MEMBER;
+
+  @IsString()
+  name: string;
 }
