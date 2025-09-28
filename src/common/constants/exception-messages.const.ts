@@ -1,5 +1,18 @@
 // 400
 export const EMAIL_IS_ALREADY_REGISTERED = 'Email is already registered.';
+export const INVALID_EMAIL_OR_PASSWORD = 'Invalid email or password.';
+
+// 401
+export const INVALID_AUTHORIZATION_HEADER_FORMAT =
+  'Invalid authorization header format.';
+export const UNSUPPORTED_AUTHENTICATION_SCHEME =
+  'Unsupported authentication scheme.';
+export const INVALID_BASIC_TOKEN_ENCODING = 'Invalid basic token encoding.';
+export const INVALID_BASIC_TOKEN_FORMAT = 'Invalid basic token format.';
+export const TOKEN_TYPE_MISMATCH = 'Token type mismatch.';
+export const TOKEN_EXPIRED = 'Token has expired.';
+export const INVALID_OR_MALFORMED_TOKEN = 'Invalid or malformed token.';
+export const MISSING_AUTHORIZATION_HEADER = 'Authorization header is missing.';
 
 // 404
 export const NOT_FOUND_RESOURCE = 'Resource not found.';
