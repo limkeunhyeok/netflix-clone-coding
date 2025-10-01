@@ -23,3 +23,8 @@ export interface RefreshTokenPayload {
   iat?: number;
   exp?: number;
 }
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}

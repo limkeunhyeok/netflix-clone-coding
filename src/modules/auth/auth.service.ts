@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -17,6 +18,7 @@ import {
   INVALID_AUTHORIZATION_HEADER_FORMAT,
   INVALID_BASIC_TOKEN_ENCODING,
   INVALID_BASIC_TOKEN_FORMAT,
+  INVALID_CREDENTIALS,
   INVALID_EMAIL_OR_PASSWORD,
   INVALID_OR_MALFORMED_TOKEN,
   TOKEN_EXPIRED,
@@ -29,6 +31,7 @@ import { User } from '../users/entities/user.entity';
 import { UserService } from '../users/user.service';
 import {
   AccessTokenPayload,
+  AuthTokens,
   BasicCredentials,
   RefreshTokenPayload,
 } from './auth.interface';
@@ -162,7 +165,16 @@ export class AuthService {
   }): Promise<User> {
     const { email, password } = params;
 
-    const user = await this.userService.findOneByEmail(email);
+    let user: User;
+
+    try {
+      user = await this.userService.findOneByEmail(email);
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw new BadRequestException(INVALID_EMAIL_OR_PASSWORD);
+      }
+      throw error;
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -173,10 +185,7 @@ export class AuthService {
     return user;
   }
 
-  async login(rawToken: string): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async login(rawToken: string): Promise<AuthTokens> {
     const params = this.parseBasicToken(rawToken);
 
     const user = await this.authenticate(params);
@@ -194,10 +203,7 @@ export class AuthService {
     email: string;
     password: string;
     name: string;
-  }): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  }): Promise<AuthTokens> {
     const user = await this.userService.create({
       ...params,
       role: Role.MEMBER,
@@ -209,6 +215,40 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
+    };
+  }
+
+  async getUserByIdOrFail(userId: number): Promise<User> {
+    try {
+      return await this.userService.findOneById(userId);
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw new UnauthorizedException(INVALID_CREDENTIALS);
+      }
+      throw error;
+    }
+  }
+
+  // refreshToken input에 Bearer 포함해야함
+  async refreshTokens(params: { refreshToken: string }): Promise<AuthTokens> {
+    const { refreshToken } = params;
+
+    const payload = await this.parseBearerToken(refreshToken, {
+      isRefreshToken: true,
+    });
+
+    const userId = payload.sub;
+
+    const user = await this.getUserByIdOrFail(userId);
+
+    const accessToken = await this.issueToken(user, { isRefreshToken: false });
+    const newRefreshToken = await this.issueToken(user, {
+      isRefreshToken: true,
+    });
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
     };
   }
 }

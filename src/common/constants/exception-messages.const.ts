@@ -13,6 +13,7 @@ export const TOKEN_TYPE_MISMATCH = 'Token type mismatch.';
 export const TOKEN_EXPIRED = 'Token has expired.';
 export const INVALID_OR_MALFORMED_TOKEN = 'Invalid or malformed token.';
 export const MISSING_AUTHORIZATION_HEADER = 'Authorization header is missing.';
+export const INVALID_CREDENTIALS = 'Invalid credentials';
 
 // 404
 export const NOT_FOUND_RESOURCE = 'Resource not found.';
