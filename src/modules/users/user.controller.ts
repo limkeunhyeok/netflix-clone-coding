@@ -8,10 +8,17 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  CursorPaginateResponse,
+  PaginateResponse,
+} from 'src/common/utils/pagination';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { FindUsersByCursorDto } from './dtos/find-users-by-cursor.dto';
+import { FindUsersByPagedDto } from './dtos/find-users-by-paged.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
@@ -30,6 +37,20 @@ export class UserController {
   @Get()
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();
+  }
+
+  @Get('paged')
+  async findAllByPage(
+    @Query() dto: FindUsersByPagedDto,
+  ): Promise<PaginateResponse<User>> {
+    return await this.userService.findUsersByPage(dto);
+  }
+
+  @Get('cursor')
+  async findAllByCursor(
+    @Query() dto: FindUsersByCursorDto,
+  ): Promise<CursorPaginateResponse<User>> {
+    return await this.userService.findUsersByCursor(dto);
   }
 
   @Get(':id')

@@ -11,7 +11,14 @@ import {
   NOT_FOUND_RESOURCE,
 } from 'src/common/constants/exception-messages.const';
 import { Role } from 'src/common/constants/role.const';
+import { SortDirection } from 'src/common/dtos/page-pagination.dto';
 import { removeUndefined } from 'src/common/utils/object';
+import {
+  CursorPaginateResponse,
+  paginateByCursor,
+  paginateByPage,
+  PaginateResponse,
+} from 'src/common/utils/pagination';
 import { EnvKeys } from 'src/configs/env.validation';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -55,6 +62,58 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({});
+  }
+
+  async findUsersByPage(params: {
+    role?: Role;
+    limit: number;
+    offset: number;
+    sortField: string;
+    sortDirection: SortDirection;
+  }): Promise<PaginateResponse<User>> {
+    const { limit, offset, sortField, sortDirection, role } = params;
+
+    return await paginateByPage({
+      repository: this.userRepository,
+      alias: 'user',
+      limit,
+      offset,
+      orderBy: {
+        field: sortField,
+        direction: sortDirection,
+      },
+      where: (qb) => {
+        if (params.role) {
+          qb.andWhere('user.role = :role', { role });
+        }
+      },
+    });
+  }
+
+  async findUsersByCursor(params: {
+    role?: Role;
+    limit: number;
+    cursor?: string;
+    sortField: string;
+    sortDirection: SortDirection;
+  }): Promise<CursorPaginateResponse<User>> {
+    const { limit, cursor, sortField, sortDirection, role } = params;
+
+    return await paginateByCursor({
+      repository: this.userRepository,
+      alias: 'user',
+      limit,
+      cursor,
+      orderBy: {
+        field: sortField,
+        direction: sortDirection,
+      },
+      where: (qb) => {
+        if (params.role) {
+          qb.andWhere('user.role = :role', { role });
+        }
+      },
+    });
   }
 
   async findOneById(id: number): Promise<User> {
