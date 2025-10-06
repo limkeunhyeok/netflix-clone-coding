@@ -21,7 +21,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migration:run": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:run -d src/common/databases/data-source.ts",
+    "migration:generate": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:generate -d src/common/databases/data-source.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.0.1",
