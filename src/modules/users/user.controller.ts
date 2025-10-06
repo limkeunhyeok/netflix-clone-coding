@@ -12,10 +12,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/common/constants/role.const';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserInToken } from 'src/common/decorators/user-in-token.decorator';
 import {
   CursorPaginateResponse,
   PaginateResponse,
 } from 'src/common/utils/pagination';
+import { AccessTokenPayload } from '../auth/auth.interface';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { FindUsersByCursorDto } from './dtos/find-users-by-cursor.dto';
 import { FindUsersByPagedDto } from './dtos/find-users-by-paged.dto';
@@ -30,16 +34,19 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.userService.create(createUserDto);
+  @Roles([Role.ADMIN])
+  async create(@Body() dto: CreateUserDto): Promise<User> {
+    return await this.userService.create(dto);
   }
 
   @Get()
+  @Roles([Role.ADMIN])
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
   @Get('paged')
+  @Roles([Role.ADMIN])
   async findAllByPage(
     @Query() dto: FindUsersByPagedDto,
   ): Promise<PaginateResponse<User>> {
@@ -47,6 +54,7 @@ export class UserController {
   }
 
   @Get('cursor')
+  @Roles([Role.ADMIN])
   async findAllByCursor(
     @Query() dto: FindUsersByCursorDto,
   ): Promise<CursorPaginateResponse<User>> {
@@ -54,20 +62,33 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles([Role.ADMIN])
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.userService.findOneById(id);
   }
 
   @Put(':id')
+  @Roles([Role.ADMIN, Role.MEMBER])
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() dto: UpdateUserDto,
+    @UserInToken() payload: AccessTokenPayload,
   ): Promise<User> {
-    return await this.userService.update(id, updateUserDto);
+    return await this.userService.update(id, dto, {
+      userId: payload.sub,
+      role: payload.role,
+    });
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.userService.remove(id);
+  @Roles([Role.ADMIN, Role.MEMBER])
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @UserInToken() payload: AccessTokenPayload,
+  ): Promise<User> {
+    return await this.userService.remove(id, {
+      userId: payload.sub,
+      role: payload.role,
+    });
   }
 }

@@ -5,8 +5,10 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
+import { RolesGuard } from './common/guards/roles.guard';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
 import { LoggingMiddleware } from './common/middlewares/logging.middleware';
 import { envValidationSchema } from './configs/env.validation';
@@ -32,7 +34,12 @@ import { UserModule } from './modules/users/user.module';
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

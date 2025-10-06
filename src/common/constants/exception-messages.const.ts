@@ -15,5 +15,9 @@ export const INVALID_OR_MALFORMED_TOKEN = 'Invalid or malformed token.';
 export const MISSING_AUTHORIZATION_HEADER = 'Authorization header is missing.';
 export const INVALID_CREDENTIALS = 'Invalid credentials';
 
+// 403
+export const FORBIDDEN_RESOURCE_MODIFICATION =
+  'You are not allowed to modify this resource.';
+
 // 404
 export const NOT_FOUND_RESOURCE = 'Resource not found.';

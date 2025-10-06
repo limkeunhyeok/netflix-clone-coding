@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import {
   EMAIL_IS_ALREADY_REGISTERED,
+  FORBIDDEN_RESOURCE_MODIFICATION,
   NOT_FOUND_RESOURCE,
 } from 'src/common/constants/exception-messages.const';
 import { Role } from 'src/common/constants/role.const';
@@ -150,6 +152,10 @@ export class UserService {
       password?: string;
       role?: Role;
     },
+    userInToken: {
+      userId: number;
+      role: Role;
+    },
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
@@ -159,6 +165,10 @@ export class UserService {
 
     if (!user) {
       throw new NotFoundException(NOT_FOUND_RESOURCE);
+    }
+
+    if (userInToken.role !== Role.ADMIN && userInToken.userId !== user.id) {
+      throw new ForbiddenException(FORBIDDEN_RESOURCE_MODIFICATION);
     }
 
     const updatedFields = removeUndefined(params);
@@ -177,7 +187,13 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async remove(id: number): Promise<User> {
+  async remove(
+    id: number,
+    userInToken: {
+      userId: number;
+      role: Role;
+    },
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id,
@@ -186,6 +202,10 @@ export class UserService {
 
     if (!user) {
       throw new NotFoundException(NOT_FOUND_RESOURCE);
+    }
+
+    if (userInToken.role !== Role.ADMIN && userInToken.userId !== user.id) {
+      throw new ForbiddenException(FORBIDDEN_RESOURCE_MODIFICATION);
     }
 
     return await this.userRepository.remove(user);
