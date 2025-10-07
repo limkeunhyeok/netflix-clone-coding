@@ -39,6 +39,12 @@ export class UserController {
     return await this.userService.create(dto);
   }
 
+  @Get('test')
+  @Roles([Role.ADMIN])
+  async test() {
+    return 'test';
+  }
+
   @Get()
   @Roles([Role.ADMIN])
   async findAll(): Promise<User[]> {

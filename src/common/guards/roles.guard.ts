@@ -1,6 +1,16 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { isNil } from 'lodash';
+import {
+  FORBIDDEN_RESOURCE_MODIFICATION,
+  INVALID_CREDENTIALS,
+} from '../constants/exception-messages.const';
 import { Role } from '../constants/role.const';
 import { Roles } from '../decorators/roles.decorator';
 import { AuthenticatedRequest } from '../middlewares/auth.middleware';
@@ -9,11 +19,10 @@ import { AuthenticatedRequest } from '../middlewares/auth.middleware';
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  // Roles(): Public
-  // Roles([]): 최소 로그인 필요
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<Role[]>(Roles, context.getHandler());
 
+    // Roles(): Public
     if (!roles) {
       return true;
     }
@@ -24,14 +33,23 @@ export class RolesGuard implements CanActivate {
 
     const user = request.user;
 
-    if (!roles.length) {
-      return !isNil(user);
+    const isLoggedIn = !isNil(user);
+
+    // Roles([]): 최소 로그인 필요
+    if (!roles.length && isLoggedIn) {
+      return true;
     }
 
-    if (isNil(user)) {
-      return false;
+    if (!isLoggedIn) {
+      throw new UnauthorizedException(INVALID_CREDENTIALS);
     }
 
-    return roles.includes(user.role);
+    const hasRole = roles.includes(user.role);
+
+    if (!hasRole) {
+      throw new ForbiddenException(FORBIDDEN_RESOURCE_MODIFICATION);
+    }
+
+    return true;
   }
 }
