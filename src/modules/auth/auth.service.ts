@@ -204,7 +204,7 @@ export class AuthService {
     password: string;
     name: string;
   }): Promise<AuthTokens> {
-    const user = await this.userService.create({
+    const user = await this.userService.createUser({
       ...params,
       role: Role.MEMBER,
     });
@@ -220,7 +220,7 @@ export class AuthService {
 
   async getUserByIdOrFail(userId: number): Promise<User> {
     try {
-      return await this.userService.findOneById(userId);
+      return await this.userService.getUserById(userId);
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw new UnauthorizedException(INVALID_CREDENTIALS);

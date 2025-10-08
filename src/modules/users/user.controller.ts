@@ -36,19 +36,13 @@ export class UserController {
   @Post()
   @Roles([Role.ADMIN])
   async create(@Body() dto: CreateUserDto): Promise<User> {
-    return await this.userService.create(dto);
-  }
-
-  @Get('test')
-  @Roles([Role.ADMIN])
-  async test() {
-    return 'test';
+    return await this.userService.createUser(dto);
   }
 
   @Get()
   @Roles([Role.ADMIN])
   async findAll(): Promise<User[]> {
-    return await this.userService.findAll();
+    return await this.userService.findAllUsers();
   }
 
   @Get('paged')
@@ -69,8 +63,8 @@ export class UserController {
 
   @Get(':id')
   @Roles([Role.ADMIN])
-  async findOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.userService.findOneById(id);
+  async getOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return await this.userService.getUserById(id);
   }
 
   @Put(':id')
@@ -80,7 +74,7 @@ export class UserController {
     @Body() dto: UpdateUserDto,
     @UserInToken() payload: AccessTokenPayload,
   ): Promise<User> {
-    return await this.userService.update(id, dto, {
+    return await this.userService.updateUser(id, dto, {
       userId: payload.sub,
       role: payload.role,
     });
@@ -92,7 +86,7 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @UserInToken() payload: AccessTokenPayload,
   ): Promise<User> {
-    return await this.userService.remove(id, {
+    return await this.userService.deleteUser(id, {
       userId: payload.sub,
       role: payload.role,
     });

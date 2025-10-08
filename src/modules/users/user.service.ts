@@ -32,7 +32,7 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async create(params: {
+  async createUser(params: {
     email: string;
     password: string;
     role: Role;
@@ -62,7 +62,7 @@ export class UserService {
     return await this.userRepository.save(createdUser);
   }
 
-  async findAll(): Promise<User[]> {
+  async findAllUsers(): Promise<User[]> {
     return await this.userRepository.find({});
   }
 
@@ -118,7 +118,7 @@ export class UserService {
     });
   }
 
-  async findOneById(id: number): Promise<User> {
+  async getUserById(id: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id,
@@ -146,7 +146,7 @@ export class UserService {
     return user;
   }
 
-  async update(
+  async updateUser(
     id: number,
     params: {
       password?: string;
@@ -187,7 +187,7 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async remove(
+  async deleteUser(
     id: number,
     userInToken: {
       userId: number;
