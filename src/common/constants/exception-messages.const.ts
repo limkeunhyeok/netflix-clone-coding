@@ -1,6 +1,7 @@
 // 400
 export const EMAIL_IS_ALREADY_REGISTERED = 'Email is already registered.';
 export const INVALID_EMAIL_OR_PASSWORD = 'Invalid email or password.';
+export const MOVIE_TITLE_ALREADY_EXISTS = 'Movie title already exists.';
 
 // 401
 export const INVALID_AUTHORIZATION_HEADER_FORMAT =

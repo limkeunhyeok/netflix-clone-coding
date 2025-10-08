@@ -15,6 +15,7 @@ import { envValidationSchema } from './configs/env.validation';
 import { TypeormConfigService } from './configs/typeorm.config';
 import { WinstonConfigService } from './configs/winston.config';
 import { AuthModule } from './modules/auth/auth.module';
+import { MovieModule } from './modules/movies/movie.module';
 import { UserModule } from './modules/users/user.module';
 
 @Module({
@@ -32,6 +33,7 @@ import { UserModule } from './modules/users/user.module';
     }),
     UserModule,
     AuthModule,
+    MovieModule,
   ],
   controllers: [],
   providers: [
