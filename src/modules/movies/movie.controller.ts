@@ -20,7 +20,7 @@ import { CreateMovieDto } from './dtos/create-movie.dto';
 import { FindMoviesByCursorDto } from './dtos/find-movies-by-cursor.dto';
 import { FindMoviesByPagedDto } from './dtos/find-movies-by-paged.dto';
 import { UpdateMovieDto } from './dtos/update-movie.dto';
-import { Movie } from './movie.entity';
+import { Movie } from './entities/movie.entity';
 import { MovieService } from './movie.service';
 
 @ApiTags('Movie')

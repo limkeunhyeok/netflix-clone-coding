@@ -17,7 +17,7 @@ import {
   PaginateResponse,
 } from 'src/common/utils/pagination';
 import { Repository } from 'typeorm';
-import { Movie } from './movie.entity';
+import { Movie } from './entities/movie.entity';
 
 @Injectable()
 export class MovieService {
