@@ -19,13 +19,18 @@ export async function paginateByPage<T extends BaseEntity>(params: {
   repository: Repository<T>;
   alias: string;
   where?: (qb: SelectQueryBuilder<T>) => void;
+  joins?: (qb: SelectQueryBuilder<T>) => void;
   limit: number;
   offset: number;
   orderBy?: { field: string; direction: SortDirection };
 }): Promise<PaginateResponse<T>> {
-  const { repository, alias, where, limit, offset, orderBy } = params;
+  const { repository, alias, where, joins, limit, offset, orderBy } = params;
 
   const qb = repository.createQueryBuilder(alias);
+
+  if (joins) {
+    joins(qb);
+  }
 
   if (where) {
     where(qb);
@@ -52,14 +57,19 @@ export async function paginateByPage<T extends BaseEntity>(params: {
 export async function paginateByCursor<T extends BaseEntity>(params: {
   repository: Repository<T>;
   alias: string;
+  where?: (qb: SelectQueryBuilder<T>) => void;
+  joins?: (qb: SelectQueryBuilder<T>) => void;
   cursor?: string;
   limit: number;
   orderBy?: { field: string; direction: SortDirection };
-  where?: (qb: SelectQueryBuilder<T>) => void;
 }): Promise<CursorPaginateResponse<T>> {
-  const { repository, alias, cursor, limit, orderBy, where } = params;
+  const { repository, alias, where, joins, cursor, limit, orderBy } = params;
 
   const qb = repository.createQueryBuilder(alias);
+
+  if (joins) {
+    joins(qb);
+  }
 
   if (where) {
     qb.where(where);

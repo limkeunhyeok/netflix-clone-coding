@@ -9,7 +9,7 @@ import {
   NOT_FOUND_RESOURCE,
 } from 'src/common/constants/exception-messages.const';
 import { removeUndefined } from 'src/common/utils/object';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Genre } from './entities/genre.entity';
 
 @Injectable()
@@ -53,6 +53,23 @@ export class GenreService {
     }
 
     return genre;
+  }
+
+  async getGenresByNames(names: string[]): Promise<Genre[]> {
+    const genres = await this.genreRepository.find({
+      where: { name: In(names) },
+    });
+
+    const foundNames = genres.map((g) => g.name);
+    const missingNames = names.filter((name) => !foundNames.includes(name));
+
+    if (missingNames.length > 0) {
+      throw new NotFoundException(
+        `Genres not found: ${missingNames.join(', ')}`,
+      );
+    }
+
+    return genres;
   }
 
   async updateGenre(
