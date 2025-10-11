@@ -52,13 +52,23 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/users/paged",
+							"raw": "{{host}}/users/paged?limit=0&offset=1",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"users",
 								"paged"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "0"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -80,13 +90,32 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/users/cursor",
+							"raw": "{{host}}/users/cursor?cursor=eyJ2YWx1ZXMiOnsiaWQiOjJ9LCJvcmRlckJ5Ijp7ImZpZWxkIjoiaWQiLCJkaXJlY3Rpb24iOiJERVNDIn19&limit=1&sortField=id",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"users",
 								"cursor"
+							],
+							"query": [
+								{
+									"key": "cursor",
+									"value": "eyJ2YWx1ZXMiOnsiaWQiOjJ9LCJvcmRlckJ5Ijp7ImZpZWxkIjoiaWQiLCJkaXJlY3Rpb24iOiJERVNDIn19"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "sortDirection",
+									"value": "ASC",
+									"disabled": true
+								},
+								{
+									"key": "sortField",
+									"value": "id"
+								}
 							]
 						}
 					},
@@ -220,7 +249,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"example@example.com\",\n    \"password\": \"password\",\n    \"role\": \"admin\",\n    \"name\": \"example\"\n}",
+							"raw": "{\n    \"email\": \"example3@example.com\",\n    \"password\": \"password\",\n    \"role\": \"admin\",\n    \"name\": \"example\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -331,13 +360,13 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "password",
-									"value": "password",
+									"key": "username",
+									"value": "admin@example.com",
 									"type": "string"
 								},
 								{
-									"key": "username",
-									"value": "example2@example.com",
+									"key": "password",
+									"value": "password",
 									"type": "string"
 								}
 							]
@@ -482,13 +511,27 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/movies/paged",
+							"raw": "{{host}}/movies/paged?limit=10&offset=0&genre=action",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"movies",
 								"paged"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "genre",
+									"value": "action"
+								}
 							]
 						}
 					},
@@ -500,13 +543,33 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/movies/cursor",
+							"raw": "{{host}}/movies/cursor?limit=10&genre=action",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"movies",
 								"cursor"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "cursor",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "sortDirection",
+									"value": "ASC",
+									"disabled": true
+								},
+								{
+									"key": "genre",
+									"value": "action"
+								}
 							]
 						}
 					},
@@ -529,7 +592,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": ""
+									"value": "1"
 								}
 							]
 						}
@@ -543,7 +606,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"example movie\"\n}",
+							"raw": "{\n    \"title\": \"movie10\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -588,7 +651,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1"
+									"value": "2"
 								}
 							]
 						}
@@ -602,7 +665,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"example movie\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -621,7 +684,307 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": ""
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "genres",
+			"item": [
+				{
+					"name": "/genres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/genres",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/genres/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/genres/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"genres",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/genres",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"crime2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/genres",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/genres/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"action\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/genres/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"genres",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/genres/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/genres/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"genres",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "directors",
+			"item": [
+				{
+					"name": "/directors",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Denis Villeneuve\",\n    \"dob\": \"1967-10-03\",\n    \"nationality\": \"Canadian\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/directors",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"directors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/directors",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/directors",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"directors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/directors/:id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/directors/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"directors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/directors/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Christopher Nolan2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/directors/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"directors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/directors/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/directors/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"directors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
 								}
 							]
 						}
