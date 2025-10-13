@@ -17,6 +17,7 @@ import {
   PaginateResponse,
 } from 'src/common/utils/pagination';
 import { Repository } from 'typeorm';
+import { DirectorService } from '../directors/director.service';
 import { GenreService } from '../genres/genre.service';
 import { Movie } from './entities/movie.entity';
 
@@ -26,13 +27,18 @@ export class MovieService {
     @InjectRepository(Movie)
     private readonly movieRepository: Repository<Movie>,
     private readonly genreService: GenreService,
+    private readonly directorService: DirectorService,
   ) {}
 
   async createMovie(params: {
     title: string;
     genreNames: string[];
+    directorId: number;
   }): Promise<Movie> {
     const genres = await this.genreService.getGenresByNames(params.genreNames);
+    const director = await this.directorService.getDirectorById(
+      params.directorId,
+    );
 
     const hasMovie = await this.movieRepository.findOne({
       where: {
@@ -47,6 +53,7 @@ export class MovieService {
     const createdMovie = this.movieRepository.create({
       title: params.title,
       genres,
+      director,
     });
 
     return await this.movieRepository.save(createdMovie);
@@ -55,7 +62,8 @@ export class MovieService {
   async findAllMovies(): Promise<Movie[]> {
     const qb = await this.movieRepository
       .createQueryBuilder('movie')
-      .leftJoinAndSelect('movie.genres', 'genres');
+      .leftJoinAndSelect('movie.genres', 'genres')
+      .leftJoinAndSelect('movie.director', 'director');
 
     return await qb.getMany();
   }
@@ -73,7 +81,10 @@ export class MovieService {
       repository: this.movieRepository,
       alias: 'movie',
       joins: (qb) => {
-        qb.leftJoinAndSelect('movie.genres', 'genres');
+        qb.leftJoinAndSelect('movie.genres', 'genres').leftJoinAndSelect(
+          'movie.director',
+          'director',
+        );
       },
       where: (qb) => {
         if (genre) {
@@ -102,7 +113,10 @@ export class MovieService {
       repository: this.movieRepository,
       alias: 'movie',
       joins: (qb) => {
-        qb.leftJoinAndSelect('movie.genres', 'genres');
+        qb.leftJoinAndSelect('movie.genres', 'genres').leftJoinAndSelect(
+          'movie.director',
+          'director',
+        );
       },
       where: (qb) => {
         if (genre) {
@@ -123,6 +137,7 @@ export class MovieService {
       where: {
         id,
       },
+      relations: ['genres', 'director'],
     });
 
     if (!movie) {
@@ -134,7 +149,7 @@ export class MovieService {
 
   async updateMovie(
     id: number,
-    params: { title?: string; genreNames?: string[] },
+    params: { title?: string; genreNames?: string[]; directorId?: number },
   ) {
     const movie = await this.movieRepository.findOne({ where: { id } });
 
@@ -142,7 +157,7 @@ export class MovieService {
       throw new NotFoundException(NOT_FOUND_RESOURCE);
     }
 
-    const { genreNames, ...rest } = removeUndefined(params);
+    const { genreNames, directorId, ...rest } = removeUndefined(params);
 
     if (rest.title) {
       const existingMovie = await this.movieRepository.findOne({
@@ -156,11 +171,14 @@ export class MovieService {
 
     Object.assign(movie, rest);
 
-    if (params.genreNames) {
-      const genres = await this.genreService.getGenresByNames(
-        params.genreNames,
-      );
+    if (genreNames) {
+      const genres = await this.genreService.getGenresByNames(genreNames);
       movie.genres = genres;
+    }
+
+    if (directorId) {
+      const director = await this.directorService.getDirectorById(directorId);
+      movie.director = director;
     }
 
     return await this.movieRepository.save(movie);
@@ -171,6 +189,7 @@ export class MovieService {
       where: {
         id,
       },
+      relations: ['genres', 'director'],
     });
 
     if (!movie) {
