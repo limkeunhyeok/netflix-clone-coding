@@ -4,12 +4,15 @@ import { Genre } from 'src/modules/genres/entities/genre.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
+import { MovieDetail } from './movie-detail.entity';
 
 @Entity()
 export class Movie extends BaseEntity {
@@ -25,4 +28,10 @@ export class Movie extends BaseEntity {
 
   @ManyToOne(() => Director, (director) => director.id)
   director: Relation<Director>;
+
+  @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
+    cascade: true,
+  })
+  @JoinColumn()
+  detail: Relation<MovieDetail>;
 }

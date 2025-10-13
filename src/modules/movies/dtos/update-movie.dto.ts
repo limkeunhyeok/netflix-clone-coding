@@ -1,6 +1,7 @@
 import {
   ArrayNotEmpty,
   IsArray,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -8,6 +9,7 @@ import {
 
 export class UpdateMovieDto {
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   title?: string;
 
@@ -20,4 +22,9 @@ export class UpdateMovieDto {
   @IsOptional()
   @IsNumber()
   directorId?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  detail?: string;
 }
