@@ -1,7 +1,15 @@
 import { Exclude } from 'class-transformer';
 import { Role } from 'src/common/constants/role.const';
 import { BaseEntity } from 'src/common/databases/base.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MovieUserLike } from 'src/modules/movies/entities/movie-user-like.entity';
+import { Movie } from 'src/modules/movies/entities/movie.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+} from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
@@ -22,4 +30,10 @@ export class User extends BaseEntity {
 
   @Column()
   name: string;
+
+  @OneToMany(() => Movie, (movie) => movie.creator)
+  createdMovies: Relation<Movie[]>;
+
+  @OneToMany(() => MovieUserLike, (mul) => mul.user)
+  likedMovies: Relation<MovieUserLike[]>;
 }

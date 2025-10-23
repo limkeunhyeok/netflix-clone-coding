@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,10 +9,12 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/common/constants/role.const';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserInToken } from 'src/common/decorators/user-in-token.decorator';
 import {
   CursorPaginateResponse,
   PaginateResponse,
@@ -25,13 +28,17 @@ import { MovieService } from './movie.service';
 
 @ApiTags('Movie')
 @Controller('movies')
+@UseInterceptors(ClassSerializerInterceptor)
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
   @Post()
   @Roles([Role.ADMIN])
-  async create(@Body() dto: CreateMovieDto): Promise<Movie> {
-    return await this.movieService.createMovie(dto);
+  async create(
+    @Body() dto: CreateMovieDto,
+    @UserInToken('sub') userId: number,
+  ): Promise<Movie> {
+    return await this.movieService.createMovie({ ...dto, userId });
   }
 
   @Get()
@@ -75,5 +82,30 @@ export class MovieController {
   @Roles([Role.ADMIN])
   async remove(@Param('id', ParseIntPipe) id: number): Promise<Movie> {
     return await this.movieService.deleteMovie(id);
+  }
+
+  @Post(':id/like')
+  @Roles([Role.ADMIN])
+  async createMovieLike(
+    @Param('id', ParseIntPipe) movieId: number,
+    @UserInToken('sub') userId: number,
+  ): Promise<{ isLike: boolean | null }> {
+    return await this.movieService.toggleMovieLike({
+      movieId,
+      userId,
+      isLike: true,
+    });
+  }
+
+  @Post(':id/dislike')
+  async createMovieDislike(
+    @Param('id', ParseIntPipe) movieId: number,
+    @UserInToken('sub') userId: number,
+  ) {
+    return await this.movieService.toggleMovieLike({
+      movieId,
+      userId,
+      isLike: false,
+    });
   }
 }

@@ -4,6 +4,7 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Director } from 'src/modules/directors/entities/director.entity';
 import { Genre } from 'src/modules/genres/entities/genre.entity';
 import { MovieDetail } from 'src/modules/movies/entities/movie-detail.entity';
+import { MovieUserLike } from 'src/modules/movies/entities/movie-user-like.entity';
 import { Movie } from 'src/modules/movies/entities/movie.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { EnvKeys } from './env.validation';
@@ -22,7 +23,7 @@ export class TypeormConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get<string>(EnvKeys.DB_USERNAME),
       password: this.configService.get<string>(EnvKeys.DB_PASSWORD),
       database: this.configService.get<string>(EnvKeys.DB_DATABASE),
-      entities: [User, Director, Movie, Genre, MovieDetail],
+      entities: [User, Director, Movie, Genre, MovieDetail, MovieUserLike],
       synchronize: true,
       logging: true,
     };
