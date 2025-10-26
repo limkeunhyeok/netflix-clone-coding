@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -41,6 +42,14 @@ import { UserModule } from './modules/users/user.module';
     WinstonModule.forRootAsync({
       useClass: WinstonConfigService,
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60 * 1000, // 60s
+          limit: 100,
+        },
+      ],
+    }),
     UserModule,
     AuthModule,
     DirectorModule,
@@ -52,6 +61,10 @@ import { UserModule } from './modules/users/user.module';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
