@@ -17,6 +17,7 @@ import {
   PaginateResponse,
 } from 'src/common/utils/pagination';
 import { Repository } from 'typeorm';
+import { Transactional } from 'typeorm-transactional';
 import { DirectorService } from '../directors/director.service';
 import { GenreService } from '../genres/genre.service';
 import { UserService } from '../users/user.service';
@@ -166,6 +167,7 @@ export class MovieService {
     return movie;
   }
 
+  @Transactional()
   async updateMovie(
     id: number,
     params: {
@@ -222,6 +224,7 @@ export class MovieService {
     return await this.movieRepository.save(movie);
   }
 
+  @Transactional()
   async deleteMovie(id: number): Promise<Movie> {
     const movie = await this.movieRepository.findOne({
       where: {
@@ -234,9 +237,13 @@ export class MovieService {
       throw new NotFoundException(NOT_FOUND_RESOURCE);
     }
 
-    return await this.movieRepository.remove(movie);
+    await this.movieRepository.remove(movie);
+    await this.movieDetailRepository.delete(movie.detail.id);
+
+    return movie;
   }
 
+  @Transactional()
   async toggleMovieLike(params: {
     movieId: number;
     userId: number;

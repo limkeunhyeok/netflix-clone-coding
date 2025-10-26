@@ -32,7 +32,7 @@ export class Movie extends BaseEntity {
   @ManyToOne(() => Director, (director) => director.id)
   director: Relation<Director>;
 
-  @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
+  @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.movie, {
     cascade: true,
   })
   @JoinColumn()

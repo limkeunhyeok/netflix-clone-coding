@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
 import { LoggingMiddleware } from './common/middlewares/logging.middleware';
@@ -29,6 +31,12 @@ import { UserModule } from './modules/users/user.module';
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeormConfigService,
+      dataSourceFactory: async (options?: DataSourceOptions) => {
+        if (!options) {
+          throw new Error('Invalid options passed.');
+        }
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
     WinstonModule.forRootAsync({
       useClass: WinstonConfigService,

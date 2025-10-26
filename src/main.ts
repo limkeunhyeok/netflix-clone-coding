@@ -2,6 +2,7 @@ import { LoggerService, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 import { AppModule } from './app.module';
 import { ApiDocsModule } from './common/api-docs/api-docs.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -9,6 +10,8 @@ import { EnvKeys } from './configs/env.validation';
 import { LogLevel } from './configs/winston.config';
 
 async function bootstrap() {
+  initializeTransactionalContext();
+
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
