@@ -92,19 +92,7 @@ export class AuthService {
     rawToken: string,
     options?: { isRefreshToken?: boolean },
   ): Promise<AccessTokenPayload | RefreshTokenPayload> {
-    if (!rawToken || typeof rawToken !== 'string') {
-      throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_FORMAT);
-    }
-
-    const parts = rawToken.split(' ');
-    if (parts.length !== 2) {
-      throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_FORMAT);
-    }
-
-    const [bearer, token] = parts;
-    if (bearer.toLowerCase() !== AuthScheme.BEARER) {
-      throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_FORMAT);
-    }
+    const token = this.extractTokenFromBearer(rawToken);
 
     const isRefreshToken = options?.isRefreshToken ?? false;
 
@@ -132,6 +120,24 @@ export class AuthService {
       }
       throw new UnauthorizedException(INVALID_OR_MALFORMED_TOKEN);
     }
+  }
+
+  extractTokenFromBearer(rawToken: string): string {
+    if (!rawToken || typeof rawToken !== 'string') {
+      throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_FORMAT);
+    }
+
+    const parts = rawToken.split(' ');
+    if (parts.length !== 2) {
+      throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_FORMAT);
+    }
+
+    const [bearer, token] = parts;
+    if (bearer.toLowerCase() !== AuthScheme.BEARER) {
+      throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_FORMAT);
+    }
+
+    return token;
   }
 
   async issueToken(

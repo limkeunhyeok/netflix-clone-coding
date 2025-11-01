@@ -1,4 +1,6 @@
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+  Inject,
   Injectable,
   NestMiddleware,
   UnauthorizedException,
@@ -6,6 +8,7 @@ import {
 import { NextFunction, Request, Response } from 'express';
 import { AccessTokenPayload } from 'src/modules/auth/auth.interface';
 import { AuthService } from 'src/modules/auth/auth.service';
+import { buildAuthAccessTokenCacheKey } from '../cache/auth.cache-key';
 import { MISSING_AUTHORIZATION_HEADER } from '../constants/exception-messages.const';
 
 export interface AuthenticatedRequest extends Request {
@@ -14,7 +17,10 @@ export interface AuthenticatedRequest extends Request {
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   async use(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const rawToken = req.headers['authorization'];
@@ -23,12 +29,35 @@ export class AuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException(MISSING_AUTHORIZATION_HEADER);
     }
 
+    const token = this.authService.extractTokenFromBearer(rawToken);
+
+    const tokenKey = buildAuthAccessTokenCacheKey(token);
+
+    const cachePayload =
+      await this.cacheManager.get<AccessTokenPayload>(tokenKey);
+
+    if (cachePayload) {
+      req.user = cachePayload;
+      return next();
+    }
+
     const payload = await this.authService.parseBearerToken(rawToken, {
       isRefreshToken: false,
     });
 
+    const expiryDate = new Date(payload.exp * 1000).getTime();
+    const now = Date.now();
+
+    const differenceInSeconds = (expiryDate - now) / 1000;
+
+    await this.cacheManager.set(
+      tokenKey,
+      payload,
+      Math.max((differenceInSeconds - 30) * 1000, 1),
+    );
+
     req.user = payload;
 
-    next();
+    return next();
   }
 }
